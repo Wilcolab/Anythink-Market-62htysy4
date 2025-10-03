@@ -33,7 +33,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-// add another endpoint for deleting a comment by commentId
 /**
  * Deletes a comment by its identifier.
  *
@@ -48,6 +47,13 @@ router.get("/", async (req, res) => {
 router.delete("/:commentId", async (req, res) => {
   try {
     const { commentId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(commentId)) {
+      return res.status(400).json({ error: "Invalid commentId" });
+    }
+    await Comment.findByIdAndDelete(commentId);
+    res.json({ message: "Comment deleted successfully" });
+      return res.status(404).json({ error: "Comment not found" });
+    }
     await Comment.findByIdAndDelete(commentId);
     res.json({ message: "Comment deleted successfully" });
   } catch (err) {
